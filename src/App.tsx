@@ -243,6 +243,7 @@ export default function App() {
   const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "success" | "error">("idle");
   const [comfyActiveId, setComfyActiveId] = useState<string>(() => localStorage.getItem("comfy_active_id") || "demo-cyberpunk");
   const [showComfyModal, setShowComfyModal] = useState(false);
+  const [showComfyGuide, setShowComfyGuide] = useState(() => localStorage.getItem("show_comfy_guide_banner") !== "false");
 
   const syncCardsToBackend = async (cardsToSync: AIPromptCard[]) => {
     if (!cardsToSync || cardsToSync.length === 0) return;
@@ -2400,6 +2401,132 @@ export default function App() {
 
           {/* GALLERY CONTENT GRID */}
           <div className="flex-1">
+            {/* ComfyUI Native Custom Node Interactive Guide Banner */}
+            {showComfyGuide && (
+              <div className={`mb-6 p-5 border rounded-2xl relative font-sans shadow-xl overflow-hidden animate-scale-in transition-all ${
+                isDark 
+                  ? "bg-[#0b0518]/90 border-emerald-500/20 text-white" 
+                  : "bg-white border-slate-200 text-slate-800"
+              }`}>
+                {/* Visual grid decor overlay */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.015)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+                
+                <div className="relative z-10 flex flex-col md:flex-row gap-5 items-start justify-between">
+                  <div className="space-y-3.5 flex-1 w-full">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="p-1 px-2 rounded bg-emerald-500/15 text-emerald-400 font-mono text-[10px] font-black tracking-wider uppercase animate-pulse">
+                          ComfyUI 插件已成功打包
+                        </span>
+                        <h3 className={`text-sm font-black tracking-wide ${isDark ? "text-slate-100" : "text-slate-800"}`}>
+                          🎯 提示词图集管理器・ComfyUI 画布联动使用指南
+                        </h3>
+                      </div>
+                      
+                      <button
+                        onClick={() => {
+                          setShowComfyGuide(false);
+                          localStorage.setItem("show_comfy_guide_banner", "false");
+                        }}
+                        className={`md:hidden p-1 rounded-full cursor-pointer transition-colors ${
+                          isDark ? "hover:bg-white/10 text-slate-450 hover:text-white" : "hover:bg-slate-100 text-slate-400"
+                        }`}
+                        title="隐藏指南"
+                      >
+                        <span className="text-base font-bold leading-none">&times;</span>
+                      </button>
+                    </div>
+
+                    <p className={`text-[11px] leading-relaxed max-w-4xl ${isDark ? "text-slate-350" : "text-slate-550 font-medium"}`}>
+                      本软件已集成专属 ComfyUI 插件后台！我们将整个应用打包成了 ComfyUI 官方标准的 <code className="text-[#a855f7] font-bold">custom_nodes</code> 扩展件。ComfyUI 的 Web 服务器将直接接管本网页。下面是极速配置指引：
+                    </p>
+
+                    {/* Highly scannable visual steps */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-1">
+                      <div className={`p-3.5 rounded-xl border relative ${
+                        isDark ? "bg-[#020005]/60 border-white/5" : "bg-slate-50 border-slate-150"
+                      }`}>
+                        <div className="absolute top-2 right-2.5 text-xs font-mono font-black opacity-15">01</div>
+                        <h4 className="text-[11.5px] font-black text-emerald-400 mb-1 flex items-center gap-1.5">
+                          <span>📂</span>
+                          <span>放置插件到对应目录</span>
+                        </h4>
+                        <p className={`text-[10.5px] leading-relaxed ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+                          拷贝打包出的 <code className="text-[#c084fc] font-bold font-mono">comfyui-prompt-gallery-manager</code> 文件夹，粘贴放入您的 <code className="text-amber-500 font-mono font-bold">ComfyUI/custom_nodes/</code> 中，并重新启动 ComfyUI。
+                        </p>
+                      </div>
+
+                      <div className={`p-3.5 rounded-xl border relative ${
+                        isDark ? "bg-[#020005]/60 border-white/5" : "bg-slate-50 border-slate-150"
+                      }`}>
+                        <div className="absolute top-2 right-2.5 text-xs font-mono font-black opacity-15">02</div>
+                        <h4 className="text-[11.5px] font-black text-emerald-400 mb-1 flex items-center gap-1.5">
+                          <span>🧩</span>
+                          <span>添加 Connector 节点</span>
+                        </h4>
+                        <p className={`text-[10.5px] leading-relaxed ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+                          在 ComfyUI 画布空白处右键搜索并新建 <code className="text-emerald-400 font-extrabold font-mono">Prompt Gallery Connector 🎯</code>。将其正/反面文本输出口连接到 CLIP Text Encode。
+                        </p>
+                      </div>
+
+                      <div className={`p-3.5 rounded-xl border relative ${
+                        isDark ? "bg-[#020005]/60 border-white/5" : "bg-slate-50 border-slate-150"
+                      }`}>
+                        <div className="absolute top-2 right-2.5 text-xs font-mono font-black opacity-15">03</div>
+                        <h4 className="text-[11.5px] font-black text-emerald-400 mb-1 flex items-center gap-1.5">
+                          <span>⚡</span>
+                          <span>一键选择并渲染</span>
+                        </h4>
+                        <p className={`text-[10.5px] leading-relaxed ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+                          在下方画廊卡片中点击任意项的 <span className="text-emerald-400 font-black">设为 Comfy 输出</span>。无需再切换本页，回到 ComfyUI 中直接运行 Queue Prompt，即可源源不断读取活跃的提示词参数！
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Copy node source code button, view configs */}
+                    <div className="flex flex-wrap items-center gap-3 pt-1">
+                      <button
+                        onClick={() => setShowComfyModal(true)}
+                        className="py-1.5 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-[11px] tracking-wide transition-all shadow-md cursor-pointer flex items-center gap-1.5 font-sans"
+                      >
+                        <Cpu size={12} />
+                        <span>获取 Python 节点源代码/接口说明 (API Config)</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          const url = `http://127.0.0.1:8188/prompt-gallery`;
+                          navigator.clipboard.writeText(url);
+                          alert("📝 ComfyUI 独立访问地址已复制：\n" + url);
+                        }}
+                        className={`py-1.5 px-3 rounded-lg border text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1.5 font-sans ${
+                          isDark ? "bg-white/5 border-white/5 hover:bg-white/10 text-slate-300" : "bg-slate-100 border-slate-200 hover:bg-slate-200 text-slate-650"
+                        }`}
+                        title="ComfyUI自带的独立地址"
+                      >
+                        <span>🔗</span>
+                        <span>复制 ComfyUI 内网地址 (8188)</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setShowComfyGuide(false);
+                      localStorage.setItem("show_comfy_guide_banner", "false");
+                    }}
+                    className={`hidden md:block p-1.5 rounded-xl cursor-pointer transition-colors border shrink-0 ${
+                      isDark 
+                        ? "bg-[#020005]/80 hover:bg-white/5 text-slate-400 hover:text-white border-white/5" 
+                        : "bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 border-slate-200"
+                    }`}
+                    title="不再显示本指南 (Dismiss)"
+                  >
+                    <span className="text-sm font-black leading-none px-2">&times; 关闭指南</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Compare Mode Guidance Banner */}
             {isCompareMode && (
               <div className="mb-5 p-4 bg-purple-950/30 border border-purple-500/20 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans shadow-lg animate-scale-in">
