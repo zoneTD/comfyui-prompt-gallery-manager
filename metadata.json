@@ -1,0 +1,8 @@
+{
+  "name": "Remix: AI 提示词与图集管理器comfyui",
+  "description": "一个用于私密安全管理、分类和搜索AI生图提示词与图集的高级管理器，支持多账户独立存储、AI自动标签生成与多模态反推提示词。",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
